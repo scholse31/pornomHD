@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Modern Video Portal</title>
+  <title>Video Portal Pro</title>
   <style>
     :root{
       --bg:#071029;
@@ -207,7 +207,10 @@
         <div class="small">Sadece yetkili kullanıcılar için</div>
         <div style="height:8px"></div>
         <input id="adminPassInput" type="password" placeholder="Şifre giriniz" />
-        <div style="height:10px"></div>
+        <div class="toggle" style="margin:8px 0">
+          <input type="checkbox" id="rememberMeToggle" />
+          <label class="small">Beni hatırla</label>
+        </div>
         <div style="display:flex;gap:8px">
           <button class="btn" id="loginBtn">Giriş Yap</button>
           <button class="btn ghost" id="closeAdmin">Kapat</button>
@@ -232,6 +235,12 @@
             <label class="small" style="margin-top:8px">Kategori *</label>
             <select id="v_cat"></select>
 
+            <!-- Kategori Ekle (Admin Panel İçinde) -->
+            <div class="add-cat" style="margin-top:8px">
+              <input id="panelNewCatInput" placeholder="Yeni kategori (panel)" />
+              <button class="btn ghost" id="panelAddCatBtn">+</button>
+            </div>
+
             <label class="small" style="margin-top:8px">Thumbnail URL</label>
             <input id="v_thumb" placeholder="https://..." />
 
@@ -240,7 +249,8 @@
             <select id="v_type">
               <option value="mp4">🎬 MP4 Link</option>
               <option value="iframe">📺 Iframe Embed</option>
-              <option value="reels">🔥 Reels (30sn altı)</option>
+              <option value="iframe-reels">🔥 Reels (Iframe)</option>
+              <option value="reels">🔥 Reels (MP4)</option>
               <option value="upload">📤 Dosya Yükle</option>
             </select>
 
@@ -288,7 +298,8 @@
       videosKey: 'vs_videos', 
       catsKey: 'vs_categories', 
       siteKey: 'vs_title',
-      sessionKey: 'vs_admin_session'
+      sessionKey: 'vs_admin_session',
+      rememberKey: 'vs_admin_remember'
     }
 
     // helpers
@@ -303,7 +314,7 @@
       {id:id(), title:'Big Buck Bunny (örnek)', url:'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', type:'mp4', category:'Örnek', thumb:'https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217', adminOnly: false}
     ])
     let categories = load(CONFIG.catsKey, ['Örnek','Sinema','Reels','Uncategorized'])
-    let isAdmin = sessionStorage.getItem(CONFIG.sessionKey) === 'true'
+    let isAdmin = sessionStorage.getItem(CONFIG.sessionKey) === 'true' || localStorage.getItem(CONFIG.rememberKey) === 'true'
     let searchQuery = ''
 
     // elements
@@ -314,6 +325,7 @@
     const panelView = $('#panelView'), panelCats = $('#panelCats'), v_cat = $('#v_cat'), v_type = $('#v_type')
     const typeArea = $('#typeArea'), reelsSection = $('#reelsSection'), searchBox = $('#searchBox')
     const searchInput = $('#searchInput'), loginStatus = $('#loginStatus')
+    const rememberMeToggle = $('#rememberMeToggle')
 
     // Update UI based on admin status
     function updateAdminUI() {
@@ -374,7 +386,7 @@
       videoGrid.innerHTML=''
       let list = videos.filter(v=> {
         if(v.adminOnly && !isAdmin) return false
-        if(v.type === 'reels') return false
+        if(v.type === 'reels' || v.type === 'iframe-reels') return false
         if(filter!=='Hepsi' && v.category!==filter) return false
         if(searchQuery && !v.title.toLowerCase().includes(searchQuery.toLowerCase())) return false
         return true
@@ -405,7 +417,7 @@
     }
 
     function renderReels(){
-      const reelsList = videos.filter(v=> v.type==='reels' && (!v.adminOnly || isAdmin))
+      const reelsList = videos.filter(v=> (v.type==='reels' || v.type==='iframe-reels') && (!v.adminOnly || isAdmin))
       if(reelsList.length === 0){
         reelsSection.style.display = 'none'
         return
@@ -416,8 +428,16 @@
         const card = document.createElement('div')
         card.className = 'reels-card'
         card.onclick = ()=>playVideo(v.id)
+        let content = ''
+        if(v.thumb){
+          content = `<img src="${v.thumb}" alt="${escapeHtml(v.title)}"/>`
+        } else if(v.type === 'iframe-reels'){
+          content = `<div style="background:linear-gradient(135deg,var(--reels),#ff6b6b);width:100%;height:100%;display:grid;place-items:center;color:#fff;font-weight:700">REELS</div>`
+        } else {
+          content = `<div style="background:linear-gradient(135deg,var(--reels),#ff6b6b);width:100%;height:100%;display:grid;place-items:center;color:#fff;font-weight:700">REELS</div>`
+        }
         card.innerHTML = `
-          ${v.thumb?`<img src="${v.thumb}" alt="${escapeHtml(v.title)}"/>`:`<div style="background:linear-gradient(135deg,var(--reels),#ff6b6b);width:100%;height:100%;display:grid;place-items:center;color:#fff;font-weight:700">REELS</div>`}
+          ${content}
           <div class="overlay">
             <div class="title">${escapeHtml(v.title)}</div>
           </div>
@@ -429,7 +449,7 @@
     function renderStats(){
       const visibleVideos = videos.filter(v=>!v.adminOnly || isAdmin)
       $('#totalVideos').textContent = visibleVideos.length
-      $('#totalReels').textContent = visibleVideos.filter(v=>v.type==='reels').length
+      $('#totalReels').textContent = visibleVideos.filter(v=>v.type==='reels' || v.type==='iframe-reels').length
       $('#totalCats').textContent = categories.length
     }
 
@@ -446,17 +466,16 @@
       if(v.adminOnly && !isAdmin) return alert('Bu içerik sadece adminler için!')
       
       const playerWrap = $('#playerWrap')
-      if(v.type==='iframe'){ 
+      if(v.type==='iframe' || v.type==='iframe-reels'){ 
         playerWrap.innerHTML = `<iframe src="${v.url}" frameborder="0" allowfullscreen allow="autoplay"></iframe>`
       } else if(v.type==='reels'){
         playerWrap.innerHTML = `<video id="mainPlayer" controls playsinline crossorigin class="reels-player"><source src="${v.url}" type="video/mp4"></video>`
       } else {
         playerWrap.innerHTML = `<video id="mainPlayer" controls playsinline crossorigin><source src="${v.url}" type="video/mp4"></video>`
       }
-      mainTitle.innerHTML = escapeHtml(v.title) + (v.type==='reels'?'<span class="badge reels">Reels</span>':'') + (v.adminOnly?'<span class="badge admin">Admin</span>':'')
+      mainTitle.innerHTML = escapeHtml(v.title) + (v.type==='reels' || v.type==='iframe-reels'?'<span class="badge reels">Reels</span>':'') + (v.adminOnly?'<span class="badge admin">Admin</span>':'')
       mainCategory.textContent = '📁 ' + v.category
       
-      // scroll to player
       $('#playerCard').scrollIntoView({behavior:'smooth', block:'center'})
     }
 
@@ -504,6 +523,7 @@
         panelView.style.display='none'
         adminPassInput.value=''
         adminPassInput.focus()
+        rememberMeToggle.checked = localStorage.getItem(CONFIG.rememberKey) === 'true'
       }
     }
     closeAdmin.onclick = ()=>{ adminModal.style.display='none' }
@@ -512,7 +532,12 @@
     loginBtn.onclick = ()=>{ 
       if(adminPassInput.value===CONFIG.adminPassword){ 
         isAdmin = true
-        sessionStorage.setItem(CONFIG.sessionKey, 'true')
+        if(rememberMeToggle.checked){
+          localStorage.setItem(CONFIG.rememberKey, 'true')
+        } else {
+          localStorage.removeItem(CONFIG.rememberKey)
+          sessionStorage.setItem(CONFIG.sessionKey, 'true')
+        }
         loginView.style.display='none'
         panelView.style.display='block'
         loadPanelHome()
@@ -533,6 +558,7 @@
       if(confirm('Çıkış yapmak istediğinize emin misiniz?')){
         isAdmin = false
         sessionStorage.removeItem(CONFIG.sessionKey)
+        localStorage.removeItem(CONFIG.rememberKey)
         panelView.style.display='none'
         loginView.style.display='block'
         adminModal.style.display='none'
@@ -559,6 +585,7 @@
       $('#v_thumb').value = ''
       $('#adminOnlyToggle').checked = false
       v_type.value = 'mp4'
+      $('#panelNewCatInput').value = ''
       
       // Reset save button
       $('#saveVideoBtn').onclick = saveNewVideo
@@ -579,7 +606,7 @@
         r.style.borderRadius='8px'
         r.style.marginBottom='6px'
         const badges = []
-        if(v.type==='reels') badges.push('<span class="badge reels">Reels</span>')
+        if(v.type==='reels' || v.type==='iframe-reels') badges.push('<span class="badge reels">Reels</span>')
         if(v.adminOnly) badges.push('<span class="badge admin">Admin</span>')
         r.innerHTML = `<strong>${escapeHtml(v.title)}</strong> ${badges.join(' ')}<div class="small">📁 ${escapeHtml(v.category)} • ${v.type}</div>`
         const ed = document.createElement('div')
@@ -622,6 +649,8 @@
         typeArea.innerHTML = `<label class="small">Iframe URL</label><input id="v_url" placeholder="https://www.youtube.com/embed/..." /><div class="small" style="margin-top:6px">YouTube, Vimeo vb. embed linklerini buraya yapıştırın</div>`
       } else if(t==='reels'){
         typeArea.innerHTML = `<label class="small">Reels Video Linki (30 saniye altı)</label><input id="v_url" placeholder="https://example.com/short-video.mp4" /><div class="small" style="margin-top:6px">⚠️ Sadece 30 saniye ve altı videolar için kullanın</div>`
+      } else if(t==='iframe-reels'){
+        typeArea.innerHTML = `<label class="small">Reels Iframe URL (YouTube Shorts, TikTok, vs.)</label><input id="v_url" placeholder="https://www.youtube.com/embed/..." /><div class="small" style="margin-top:6px">⚠️ Shorts veya dikey embed linkleri için</div>`
       } else { 
         typeArea.innerHTML = `
           <label class="small">Video Dosyası Seç</label>
@@ -719,7 +748,7 @@
       $('#v_title').value = v.title
       $('#v_thumb').value = v.thumb||''
       v_cat.value = v.category||categories[0] || 'Uncategorized'
-      v_type.value = v.type==='reels'?'reels':(v.type==='iframe'?'iframe':'mp4')
+      v_type.value = v.type
       $('#adminOnlyToggle').checked = v.adminOnly || false
       renderTypeArea()
       
@@ -755,7 +784,7 @@
 
     // export/import
     $('#exportBtn').onclick = ()=>{ 
-      const data = {videos, categories, version:'2.0'}
+      const data = {videos, categories, version:'2.1'}
       const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'})
       const url = URL.createObjectURL(blob)
       const a=document.createElement('a')
@@ -796,7 +825,7 @@
       inp.click()
     }
 
-    // add category
+    // add category (sidebar)
     $('#addCatBtn').onclick = ()=>{ 
       const n = $('#newCatInput').value.trim()
       if(!n) return alert('⚠️ Kategori adı giriniz!')
@@ -805,6 +834,18 @@
       saveAll()
       renderAll()
       $('#newCatInput').value=''
+      alert('✅ Kategori eklendi: ' + n)
+    }
+
+    // add category (admin panel)
+    $('#panelAddCatBtn').onclick = ()=>{ 
+      const n = $('#panelNewCatInput').value.trim()
+      if(!n) return alert('⚠️ Kategori adı giriniz!')
+      if(categories.includes(n)) return alert('⚠️ Bu kategori zaten mevcut!')
+      categories.push(n)
+      saveAll()
+      loadPanelHome()
+      $('#panelNewCatInput').value=''
       alert('✅ Kategori eklendi: ' + n)
     }
 
@@ -863,9 +904,12 @@
       e.preventDefault()
       alert(`📖 Video Portal Pro - Yardım
 
-🔐 Admin Girişi: Şifre "****"
-🎬 Video Ekleme: MP4, iframe, reels destekler
-🔥 Reels: 30 saniye altı videolar için
+🔐 Admin Girişi: Şifre "scholse"
+🎬 Video Türleri:
+   • MP4: Doğrudan video linki
+   • Iframe: YouTube, Vimeo vb.
+   • Reels (MP4): Kısa dikey video
+   • Reels (Iframe): Shorts, TikTok embed
 👤 Admin-Only: Sadece admin görebilir
 🔍 Arama: Sağ üstteki arama butonunu kullan
 📊 İstatistikler: Ana sayfada gösterilir
@@ -877,14 +921,10 @@
     updateAdminUI()
     renderAll()
 
-    // Auto-logout on tab close (session-based)
-    window.addEventListener('beforeunload', ()=>{
-      // Session storage automatically clears
-    })
-
     // Expose for inline handlers
     window.openEdit = openEdit
     window.playVideo = playVideo
   </script>
 </body>
 </html>
+
