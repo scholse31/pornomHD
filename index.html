@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>🔥 Hdpornom(abdulmecit)</title>
+  <style>
+    :root{
+      --bg:#071029;
+      --panel:#081226;
+      --muted:#9fb0c8;
+      --accent:#ff6b6b;
+      --accent2:#6bffde;
+      --reels:#ff3b9a;
+      --radius:16px;
+      --shadow: 0 8px 30px rgba(2,6,23,0.6);
+      --glass: rgba(255,255,255,0.05);
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      background: linear-gradient(135deg, #031028 0%, #071029 50%, #0a1835 100%);
+      color:#eaf6ff;
+      min-height:100vh;
+      overflow-x: hidden;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(-100px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    .container{
+      max-width:1400px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns:280px 1fr;
+      gap:0;
+      min-height:100vh;
+    }
+    
+    /* Glass Sidebar */
+    .sidebar{
+      background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(255,255,255,0.1);
+      padding:30px 20px;
+      height:100vh;
+      position:sticky;
+      top:0;
+      overflow-y:auto;
+      animation: slideIn 0.8s ease-out;
+    }
+    
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:15px;
+      margin-bottom:40px;
+      padding:0 10px;
+    }
+    
+    .logo-icon{
+      width:50px;
+      height:50px;
+      border-radius:12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      color:#061826;
+      font-size:20px;
+      box-shadow: 0 4px 20px rgba(255,107,107,0.3);
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .logo-text h1{
+      font-size:20px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight:800;
+    }
+    
+    .logo-text p{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:2px;
+    }
+    
+    /* Admin Button */
+    .admin-btn{
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border:none;
+      color:#061826;
+      padding:12px 20px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:600;
+      width:100%;
+      margin-bottom:20px;
+      transition:all 0.3s ease;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+    
+    .admin-btn:hover{
+      transform:translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255,107,107,0.3);
+    }
+    
+    /* Categories */
+    .categories-section h3{
+      color:var(--accent2);
+      margin-bottom:20px;
+      font-size:16px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    
+    .categories{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    
+    .category{
+      padding:14px 16px;
+      background: var(--glass);
+      border-radius:12px;
+      cursor:pointer;
+      transition: all 0.3s ease;
+      border:1px solid transparent;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      animation: fadeIn 0.6s ease-out;
+    }
+    
+    .category:hover{
+      background: rgba(255,255,255,0.1);
+      transform: translateX(8px);
+      border-color: rgba(255,255,255,0.2);
+    }
+    
+    .category.active{
+      background: linear-gradient(135deg, rgba(255,107,107,0.15), rgba(107,255,222,0.1));
+      border-color: var(--accent);
+      box-shadow: 0 4px 20px rgba(255,107,107,0.2);
+    }
+    
+    .category-count{
+      background: var(--accent);
+      color:white;
+      padding:4px 10px;
+      border-radius:20px;
+      font-size:11px;
+      font-weight:600;
+      min-width:30px;
+      text-align:center;
+    }
+    
+    /* Main Content */
+    .main-content{
+      padding:30px;
+      background: rgba(255,255,255,0.02);
+      min-height:100vh;
+      animation: fadeIn 1s ease-out;
+    }
+    
+    /* Header */
+    .main-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:30px;
+      flex-wrap:wrap;
+      gap:15px;
+    }
+    
+    .user-info{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    
+    .user-avatar{
+      width:40px;
+      height:40px;
+      border-radius:50%;
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:600;
+      color:#061826;
+    }
+    
+    /* Header Stats */
+    .header-stats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:20px;
+      margin-bottom:30px;
+    }
+    
+    .stat-card{
+      background: linear-gradient(135deg, var(--glass), rgba(255,255,255,0.02));
+      padding:25px;
+      border-radius:var(--radius);
+      border:1px solid rgba(255,255,255,0.1);
+      text-align:center;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    
+    .stat-card::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+    
+    .stat-card:hover{
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    
+    .stat-num{
+      font-size:32px;
+      font-weight:800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display:block;
+    }
+    
+    .stat-label{
+      font-size:14px;
+      color:var(--muted);
+      margin-top:8px;
+    }
+    
+    /* Reels Section */
+    .reels-section{
+      background: linear-gradient(135deg, rgba(255,59,154,0.1), rgba(255,107,107,0.05));
+      border-radius:var(--radius);
+      border:1px solid rgba(255,255,255,0.1);
+      padding:25px;
+      margin-bottom:30px;
+      backdrop-filter: blur(10px);
+      position:relative;
+      overflow:hidden;
+    }
+    
+    .reels-section::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:3px;
+      background: linear-gradient(90deg, var(--reels), #ff6b6b);
+    }
+    
+    .reels-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:20px;
+    }
+    
+    .reels-title{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    
+    .reels-title h3{
+      color:var(--reels);
+      margin:0;
+      font-size:24px;
+      font-weight:700;
+    }
+    
+    .live-badge{
+      background: linear-gradient(135deg, #ff3b3b, #ff6b6b);
+      color:white;
+      padding:6px 12px;
+      border-radius:20px;
+      font-size:12px;
+      font-weight:700;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      animation: pulse 2s infinite;
+    }
+    
+    .live-dot{
+      width:8px;
+      height:8px;
+      background:#fff;
+      border-radius:50%;
+      animation: pulse 1s infinite;
+    }
+    
+    .reels-container{
+      display:flex;
+      gap:20px;
+      overflow-x:auto;
+      padding:15px 5px;
+      scrollbar-width:thin;
+      scrollbar-color:var(--reels) transparent;
+    }
+    
+    .reels-container::-webkit-scrollbar{
+      height:6px;
+    }
+    
+    .reels-container::-webkit-scrollbar-track{
+      background:transparent;
+    }
+    
+    .reels-container::-webkit-scrollbar-thumb{
+      background: linear-gradient(135deg, var(--reels), #ff6b6b);
+      border-radius:10px;
+    }
+    
+    .reels-card{
+      flex:0 0 auto;
+      width:150px;
+      height:267px;
+      border-radius:20px;
+      overflow:hidden;
+      cursor:pointer;
+      position:relative;
+      transition: all 0.4s ease;
+      border:2px solid transparent;
+      background: linear-gradient(135deg, var(--reels), #ff6b6b);
+    }
+    
+    .reels-card:hover{
+      transform: scale(1.08) rotate(2deg);
+      border-color:var(--reels);
+      box-shadow: 0 10px 30px rgba(255,59,154,0.3);
+    }
+    
+    .reels-thumb{
+      width:100%;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      overflow:hidden;
+    }
+    
+    .reels-thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      transition: transform 0.3s ease;
+    }
+    
+    .reels-card:hover .reels-thumb img{
+      transform: scale(1.1);
+    }
+    
+    .reels-overlay{
+      position:absolute;
+      bottom:0;
+      left:0;
+      right:0;
+      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+      padding:15px 12px;
+      color:white;
+    }
+    
+    .reels-play-icon{
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%);
+      background:rgba(255,255,255,0.9);
+      border-radius:50%;
+      width:40px;
+      height:40px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      opacity:0;
+      transition:all 0.3s ease;
+    }
+    
+    .reels-card:hover .reels-play-icon{
+      opacity:1;
+      transform:translate(-50%,-50%) scale(1.2);
+    }
+    
+    .reels-title-text{
+      font-size:12px;
+      font-weight:600;
+      line-height:1.3;
+    }
+    
+    /* Video Grid */
+    .video-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+      gap:25px;
+    }
+    
+    .video-card{
+      background: linear-gradient(135deg, var(--glass), rgba(255,255,255,0.02));
+      border-radius:var(--radius);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.1);
+      transition: all 0.4s ease;
+      backdrop-filter: blur(10px);
+      position:relative;
+    }
+    
+    .video-card::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      opacity:0;
+      transition:opacity 0.3s ease;
+    }
+    
+    .video-card:hover{
+      transform:translateY(-8px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+      border-color:rgba(255,255,255,0.2);
+    }
+    
+    .video-card:hover::before{
+      opacity:1;
+    }
+    
+    .video-thumb{
+      width:100%;
+      height:160px;
+      background: linear-gradient(135deg, #0a1a35, #152a4f);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      overflow:hidden;
+    }
+    
+    .video-thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      transition:transform 0.3s ease;
+    }
+    
+    .video-card:hover .video-thumb img{
+      transform:scale(1.1);
+    }
+    
+    .video-info{
+      padding:20px;
+    }
+    
+    .video-title{
+      font-weight:600;
+      margin-bottom:8px;
+      font-size:15px;
+      line-height:1.4;
+    }
+    
+    .video-category{
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:15px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    
+    .play-btn{
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border:none;
+      color:#061826;
+      padding:10px 20px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
+      width:100%;
+      transition:all 0.3s ease;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+    
+    .play-btn:hover{
+      transform:translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255,107,107,0.3);
+    }
+    
+    /* Player */
+    .player-section{
+      background: var(--panel);
+      padding:25px;
+      border-radius:var(--radius);
+      border:1px solid rgba(255,255,255,0.1);
+      margin-bottom:30px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .player-placeholder{
+      background: linear-gradient(135deg, #000, #1a1a2e);
+      border-radius:12px;
+      height:500px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--muted);
+      font-size:18px;
+      border:2px dashed rgba(255,255,255,0.1);
+    }
+    
+    /* Reels Player */
+    .reels-player{
+      max-width:400px;
+      height:700px;
+      margin:0 auto;
+      background:#000;
+      border-radius:24px;
+      overflow:hidden;
+      position:relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      border:3px solid var(--reels);
+    }
+    
+    /* Admin Modal */
+    .modal{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.8);
+      backdrop-filter:blur(10px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:1000;
+      padding:20px;
+    }
+    
+    .modal-content{
+      background: linear-gradient(135deg, var(--panel), #0a1a35);
+      border-radius:var(--radius);
+      padding:30px;
+      max-width:600px;
+      width:100%;
+      max-height:90vh;
+      overflow-y:auto;
+      border:1px solid rgba(255,255,255,0.1);
+      position:relative;
+    }
+    
+    .modal-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:25px;
+    }
+    
+    .modal-header h2{
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size:24px;
+    }
+    
+    .close-modal{
+      background:none;
+      border:none;
+      color:var(--muted);
+      font-size:24px;
+      cursor:pointer;
+      transition:color 0.3s ease;
+    }
+    
+    .close-modal:hover{
+      color:var(--accent);
+    }
+    
+    .form-group{
+      margin-bottom:20px;
+    }
+    
+    .form-group label{
+      display:block;
+      margin-bottom:8px;
+      color:var(--muted);
+      font-size:14px;
+    }
+    
+    .form-control{
+      width:100%;
+      padding:12px 15px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.1);
+      border-radius:8px;
+      color:white;
+      font-size:14px;
+      transition:all 0.3s ease;
+    }
+    
+    .form-control:focus{
+      outline:none;
+      border-color:var(--accent);
+      background:rgba(255,255,255,0.08);
+    }
+    
+    .textarea-control{
+      width:100%;
+      padding:12px 15px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.1);
+      border-radius:8px;
+      color:white;
+      font-size:12px;
+      font-family:monospace;
+      min-height:200px;
+      resize:vertical;
+      transition:all 0.3s ease;
+    }
+    
+    .textarea-control:focus{
+      outline:none;
+      border-color:var(--accent);
+      background:rgba(255,255,255,0.08);
+    }
+    
+    .admin-actions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:25px;
+    }
+    
+    .admin-actions-3{
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:10px;
+      margin-top:25px;
+    }
+    
+    .btn-primary{
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      color:#061826;
+      border:none;
+      padding:12px 20px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+      transition:all 0.3s ease;
+    }
+    
+    .btn-primary:hover{
+      transform:translateY(-2px);
+      box-shadow:0 5px 15px rgba(255,107,107,0.3);
+    }
+    
+    .btn-secondary{
+      background:rgba(255,255,255,0.05);
+      color:var(--muted);
+      border:1px solid rgba(255,255,255,0.1);
+      padding:12px 20px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+      transition:all 0.3s ease;
+    }
+    
+    .btn-secondary:hover{
+      background:rgba(255,255,255,0.1);
+      color:white;
+    }
+    
+    .btn-success{
+      background:linear-gradient(135deg, #4CAF50, #45a049);
+      color:white;
+      border:none;
+      padding:12px 20px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+      transition:all 0.3s ease;
+    }
+    
+    .btn-success:hover{
+      transform:translateY(-2px);
+      box-shadow:0 5px 15px rgba(76,175,80,0.3);
+    }
+    
+    .copy-notification{
+      position:fixed;
+      top:20px;
+      right:20px;
+      background:var(--accent);
+      color:white;
+      padding:12px 20px;
+      border-radius:8px;
+      font-weight:600;
+      z-index:1001;
+      animation:slideIn 0.3s ease-out;
+      display:none;
+    }
+    
+    /* Responsive */
+    @media (max-width:1024px){
+      .container{
+        grid-template-columns:1fr;
+      }
+      .sidebar{
+        height:auto;
+        position:relative;
+      }
+    }
+    
+    @media (max-width:768px){
+      .header-stats{
+        grid-template-columns:1fr;
+      }
+      .video-grid{
+        grid-template-columns:1fr;
+      }
+      .reels-card{
+        width:130px;
+        height:230px;
+      }
+      .reels-player{
+        max-width:320px;
+        height:560px;
+      }
+      .main-content{
+        padding:20px;
+      }
+      .admin-actions{
+        grid-template-columns:1fr;
+      }
+      .admin-actions-3{
+        grid-template-columns:1fr;
+      }
+      .modal-content{
+        max-width:95%;
+        padding:20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Glass Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">🔥</div>
+        <div class="logo-text">
+          <h1>pornomHd Apo</h1>
+          <p>Premium İçerik Platformu</p>
+        </div>
+      </div>
+
+      <button class="admin-btn" onclick="openAdminModal()">
+        ⚙️ Admin Panel
+      </button>
+
+      <div class="categories-section">
+        <h3>🎯 Kategoriler</h3>
+        <div class="categories" id="categoriesList">
+          <!-- Kategoriler buraya eklenecek -->
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <div class="main-header">
+        <div class="header-stats">
+          <div class="stat-card">
+            <div class="stat-num" id="totalVideos">0</div>
+            <div class="stat-label">Toplam İçerik</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="totalReels">0</div>
+            <div class="stat-label">Reels</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="totalCats">0</div>
+            <div class="stat-label">Kategori</div>
+          </div>
+        </div>
+        <div class="user-info">
+          <div class="user-avatar">U</div>
+          <div>
+            <div style="font-weight:600">Kullanıcı</div>
+            <div style="font-size:12px;color:var(--muted)">Premium Üye</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reels Section -->
+      <div class="reels-section" id="reelsSection">
+        <div class="reels-header">
+          <div class="reels-title">
+            <h3>🔥 REELS</h3>
+            <div class="live-badge">
+              <div class="live-dot"></div>
+              YENİ
+            </div>
+          </div>
+        </div>
+        <div class="reels-container" id="reelsContainer">
+          <!-- Reels kartları buraya eklenecek -->
+        </div>
+      </div>
+
+      <!-- Player Section -->
+      <div class="player-section">
+        <div class="player-placeholder" id="player">
+          <div style="text-align:center">
+            <div style="font-size:48px;margin-bottom:15px">🎬</div>
+            <div>Oynatmak için bir içerik seçin</div>
+            <div style="font-size:12px;margin-top:8px;opacity:0.7">Reels'ları keşfedin!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video Grid -->
+      <div class="video-grid" id="videoGrid">
+        <!-- Normal videolar buraya eklenecek -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Copy Notification -->
+  <div class="copy-notification" id="copyNotification">
+    ✅ Kopyalandı!
+  </div>
+
+  <!-- Admin Modal -->
+  <div id="adminModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>⚙️ Admin Panel</h2>
+        <button class="close-modal" onclick="closeAdminModal()">×</button>
+      </div>
+      
+      <div id="loginView">
+        <div class="form-group">
+          <label>🔐 Admin Şifresi</label>
+          <input type="password" id="adminPassword" class="form-control" placeholder="Şifreyi giriniz">
+        </div>
+        <div class="admin-actions">
+          <button class="btn-primary" onclick="loginAdmin()">Giriş Yap</button>
+          <button class="btn-secondary" onclick="closeAdminModal()">İptal</button>
+        </div>
+      </div>
+      
+      <div id="adminPanel" style="display:none">
+        <!-- Video Ekleme -->
+        <div class="form-group">
+          <label>📹 Yeni Video Ekle</label>
+          <input type="text" id="videoTitle" class="form-control" placeholder="Video başlığı">
+        </div>
+        
+        <div class="form-group">
+          <label>📁 Kategori</label>
+          <select id="videoCategory" class="form-control">
+            <option value="">Kategori seçin</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>🔗 Video URL</label>
+          <input type="text" id="videoUrl" class="form-control" placeholder="Video linki">
+        </div>
+        
+        <div class="form-group">
+          <label>🖼️ Thumbnail URL</label>
+          <input type="text" id="videoThumb" class="form-control" placeholder="Thumbnail linki (opsiyonel)">
+        </div>
+        
+        <div class="admin-actions">
+          <button class="btn-primary" onclick="addVideo()">Video Ekle</button>
+          <button class="btn-secondary" onclick="resetForm()">Temizle</button>
+        </div>
+        
+        <hr style="margin:25px 0;border:none;border-top:1px solid rgba(255,255,255,0.1)">
+        
+        <!-- Kategori Ekleme -->
+        <div class="form-group">
+          <label>📂 Yeni Kategori Ekle</label>
+          <input type="text" id="newCategory" class="form-control" placeholder="Kategori adı">
+        </div>
+        
+        <div class="admin-actions">
+          <button class="btn-primary" onclick="addCategory()">Kategori Ekle</button>
+        </div>
+        
+        <hr style="margin:25px 0;border:none;border-top:1px solid rgba(255,255,255,0.1)">
+        
+        <!-- İçe/Dışa Aktarma -->
+        <div class="form-group">
+          <label>📥 Videoları Dışa Aktar</label>
+          <textarea class="textarea-control" id="exportData" readonly placeholder="Videolar burada görünecek..."></textarea>
+        </div>
+        
+        <div class="admin-actions-3">
+          <button class="btn-success" onclick="exportVideos()">Videoları Göster</button>
+          <button class="btn-primary" onclick="copyToClipboard()">Panoya Kopyala</button>
+          <button class="btn-secondary" onclick="clearExport()">Temizle</button>
+        </div>
+        
+        <div class="form-group">
+          <label>📤 Videoları İçe Aktar</label>
+          <textarea class="textarea-control" id="importData" placeholder="Videoları buraya yapıştırın..."></textarea>
+          <div style="font-size:11px;color:var(--muted);margin-top:5px">
+            Format: [{ "id": "...", "title": "...", "url": "...", "type": "...", "category": "...", "thumb": "...", "adminOnly": false }]
+          </div>
+        </div>
+        
+        <div class="admin-actions">
+          <button class="btn-primary" onclick="importVideos()">Videoları Yükle</button>
+          <button class="btn-secondary" onclick="clearImport()">Temizle</button>
+        </div>
+        
+        <hr style="margin:25px 0;border:none;border-top:1px solid rgba(255,255,255,0.1)">
+        
+        <div class="admin-actions">
+          <button class="btn-secondary" onclick="logoutAdmin()">Çıkış Yap</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // VİDEOLARINIZ - DÜZGÜN TANIMLANMIŞ HALİ
+    let videos = [
+      {
+        "id": "lyro3ha",
+        "title": "anne kız grup",
+        "url": "https://drive.google.com/file/d/1ff5fq2XWqjGVl1QxB31dVv29NoTQTxQO/preview",
+        "type": "iframe",
+        "category": "Grup",
+        "thumb": "",
+        "adminOnly": false
+      },
+      {
+        "id": "hv9d4xw",
+        "title": "Anneme Dayadım",
+        "url": "https://drive.google.com/file/d/18wLHdFlbE0zlHU61a-zmG5hXSzpZ2qCL/preview",
+        "type": "iframe",
+        "category": "Anne",
+        "thumb": "",
+        "adminOnly": false
+      },
+      {
+        "id": "x0vr30l",
+        "title": "Hop hop",
+        "url": "https://drive.google.com/file/d/1wFQTBpxFFOjKbhjauEjSYZAIlKBlo5OR/preview",
+        "type": "iframe",
+        "category": "Reels",
+        "thumb": "",
+        "adminOnly": false
+      },
+      {
+        "id": "r93428c",
+        "title": "Kabus Gördüm diye annemi kandırdım",
+        "url": "https://drive.google.com/file/d/1C6hiLc2szB2ikTCPdlLSY9OP-npLmJeH/preview",
+        "type": "iframe",
+        "category": "Anne",
+        "thumb": "",
+        "adminOnly": false
+      },
+      {
+        "id": "e8r6o0q",
+        "title": "arkadan",
+        "url": "https://drive.google.com/file/d/1hYN7ctodYRPczCet3DtlXi9HYHe7KA04/preview",
+        "type": "iframe-reels",
+        "category": "Reels",
+        "thumb": "",
+        "adminOnly": false
+      },
+      {
+        "id": "9f3ocsc",
+        "title": "Kuzeniyle hard",
+        "url": "https://drive.google.com/file/d/12W_KMAnhBT-sHOX081kYq8VMkWPowpmV/preview",
+        "type": "iframe-reels",
+        "category": "Reels",
+        "thumb": "",
+        "adminOnly": false
+      },
+      {
+        "id": "f6s3zhm",
+        "title": "Duşta Hard",
+        "url": "https://drive.google.com/file/d/1c2EJ_Ecdg98ciCjxxNFSf95IbkU4MNCY/preview",
+        "type": "iframe-reels",
+        "category": "Reels",
+        "thumb": "https://drive.google.com/thumbnail?id=1c2EJ_Ecdg98ciCjxxNFSf95IbkU4MNCY&sz=w400",
+        "adminOnly": false
+      },
+      {
+        "id": "m16ofcn",
+        "title": "Kısa Sakso Çeken kız",
+        "url": "https://drive.google.com/file/d/1UmK8eBi_si5N5-68ia5mqGMFslbdaYie/preview",
+        "type": "iframe",
+        "category": "sakso",
+        "thumb": "https://drive.google.com/thumbnail?id=1UmK8eBi_si5N5-68ia5mqGMFslbdaYie&sz=w400",
+        "adminOnly": false
+      },
+      {
+        "id": "9nr2wf1",
+        "title": "Temizlik Yapan Anneme Soktum",
+        "url": "https://drive.google.com/file/d/18wLHdFlbE0zlHU61a-zmG5hXSzpZ2qCL/preview",
+        "type": "iframe",
+        "category": "Anne",
+        "thumb": "https://drive.google.com/thumbnail?id=18wLHdFlbE0zlHU61a-zmG5hXSzpZ2qCL&sz=w400",
+        "adminOnly": false
+      },
+      {
+        "id": "v7lrnoh",
+        "title": "Yemek Yapan anneme dayadım",
+        "url": "https://drive.google.com/file/d/15i-AnO1Z3u4HbZ7fUCKmY9zerO6Vahgp/preview",
+        "type": "iframe",
+        "category": "Anne",
+        "thumb": "https://drive.google.com/thumbnail?id=15i-AnO1Z3u4HbZ7fUCKmY9zerO6Vahgp&sz=w400",
+        "adminOnly": false
+      }
+    ];
+
+    let activeCategory = 'Hepsi';
+    let isAdmin = false;
+    const ADMIN_PASSWORD = 'scholse';
+
+    // YENİ: KOPYALAMA BİLDİRİMİ
+    function showCopyNotification() {
+      const notification = document.getElementById('copyNotification');
+      notification.style.display = 'block';
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 2000);
+    }
+
+    // YENİ: VİDEOLARI DIŞA AKTAR
+    function exportVideos() {
+      const exportData = document.getElementById('exportData');
+      const videosJSON = JSON.stringify(videos, null, 2);
+      exportData.value = videosJSON;
+    }
+
+    // YENİ: PANOYA KOPYALA
+    function copyToClipboard() {
+      const exportData = document.getElementById('exportData');
+      if (exportData.value.trim() === '') {
+        alert('⚠️ Önce videoları dışa aktarın!');
+        return;
+      }
+      
+      exportData.select();
+      exportData.setSelectionRange(0, 99999);
+      
+      try {
+        navigator.clipboard.writeText(exportData.value);
+        showCopyNotification();
+      } catch (err) {
+        // Fallback for older browsers
+        document.execCommand('copy');
+        showCopyNotification();
+      }
+    }
+
+    // YENİ: İÇE AKTARMAYI TEMİZLE
+    function clearExport() {
+      document.getElementById('exportData').value = '';
+    }
+
+    // YENİ: VİDEOLARI İÇE AKTAR
+    function importVideos() {
+      const importData = document.getElementById('importData');
+      const data = importData.value.trim();
+      
+      if (!data) {
+        alert('⚠️ Lütfen video verilerini yapıştırın!');
+        return;
+      }
+      
+      try {
+        const parsedVideos = JSON.parse(data);
+        
+        if (!Array.isArray(parsedVideos)) {
+          alert('❌ Geçersiz format! Video listesi array olmalı.');
+          return;
+        }
+        
+        // Yeni videoları mevcut listeye ekle
+        videos = [...parsedVideos, ...videos];
+        
+        // Yenile
+        renderAll();
+        loadAdminCategories();
+        clearImport();
+        
+        alert(`✅ ${parsedVideos.length} video başarıyla yüklendi!`);
+      } catch (error) {
+        alert('❌ Geçersiz JSON formatı! Lütfen doğru formatta veri girin.');
+        console.error('Import error:', error);
+      }
+    }
+
+    // YENİ: İÇE AKTARMAYI TEMİZLE
+    function clearImport() {
+      document.getElementById('importData').value = '';
+    }
+
+    // ADMIN MODAL
+    function openAdminModal() {
+      document.getElementById('adminModal').style.display = 'flex';
+      if (!isAdmin) {
+        document.getElementById('loginView').style.display = 'block';
+        document.getElementById('adminPanel').style.display = 'none';
+      } else {
+        document.getElementById('loginView').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        loadAdminCategories();
+        exportVideos(); // Otomatik olarak videoları göster
+      }
+    }
+
+    function closeAdminModal() {
+      document.getElementById('adminModal').style.display = 'none';
+    }
+
+    function loginAdmin() {
+      const password = document.getElementById('adminPassword').value;
+      if (password === ADMIN_PASSWORD) {
+        isAdmin = true;
+        document.getElementById('loginView').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        loadAdminCategories();
+        exportVideos(); // Otomatik olarak videoları göster
+        document.getElementById('adminPassword').value = '';
+      } else {
+        alert('❌ Hatalı şifre!');
+      }
+    }
+
+    function logoutAdmin() {
+      isAdmin = false;
+      closeAdminModal();
+    }
+
+    function loadAdminCategories() {
+      const select = document.getElementById('videoCategory');
+      select.innerHTML = '<option value="">Kategori seçin</option>';
+      const categories = [...new Set(videos.map(v => v.category))];
+      categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        select.appendChild(option);
+      });
+    }
+
+    function addVideo() {
+      if (!isAdmin) return;
+      
+      const title = document.getElementById('videoTitle').value.trim();
+      const category = document.getElementById('videoCategory').value;
+      const url = document.getElementById('videoUrl').value.trim();
+      const thumb = document.getElementById('videoThumb').value.trim();
+      
+      if (!title || !category || !url) {
+        alert('❌ Lütfen tüm alanları doldurun!');
+        return;
+      }
+      
+      const newVideo = {
+        id: 'vid_' + Date.now(),
+        title: title,
+        url: url,
+        type: url.includes('drive.google.com') ? 'iframe' : 'iframe',
+        category: category,
+        thumb: thumb,
+        adminOnly: false
+      };
+      
+      videos.unshift(newVideo);
+      renderAll();
+      resetForm();
+      exportVideos(); // Listeyi güncelle
+      alert('✅ Video başarıyla eklendi!');
+    }
+
+    function addCategory() {
+      if (!isAdmin) return;
+      
+      const newCat = document.getElementById('newCategory').value.trim();
+      if (!newCat) {
+        alert('❌ Lütfen kategori adı girin!');
+        return;
+      }
+      
+      if (videos.some(v => v.category === newCat)) {
+        alert('❌ Bu kategori zaten mevcut!');
+        return;
+      }
+      
+      document.getElementById('newCategory').value = '';
+      loadAdminCategories();
+      renderAll();
+      alert('✅ Kategori eklendi: ' + newCat);
+    }
+
+    function resetForm() {
+      document.getElementById('videoTitle').value = '';
+      document.getElementById('videoUrl').value = '';
+      document.getElementById('videoThumb').value = '';
+    }
+
+    // KATEGORİLERİ GÖSTER
+    function renderCategories() {
+      const categoriesList = document.getElementById('categoriesList');
+      const categories = ['Hepsi', ...new Set(videos.map(video => video.category))];
+      
+      categoriesList.innerHTML = '';
+      
+      categories.forEach((category, index) => {
+        const count = category === 'Hepsi' 
+          ? videos.length 
+          : videos.filter(v => v.category === category).length;
+        
+        const icons = ['🚀', '🔥', '⭐', '💫', '🎯', '💎', '👑'];
+        const icon = category === 'Reels' ? '🔥' : icons[index % icons.length];
+        
+        const categoryElement = document.createElement('div');
+        categoryElement.className = `category ${activeCategory === category ? 'active' : ''}`;
+        categoryElement.style.animationDelay = `${index * 0.1}s`;
+        categoryElement.innerHTML = `
+          <span>${icon} ${category}</span>
+          <span class="category-count">${count}</span>
+        `;
+        
+        categoryElement.onclick = () => {
+          activeCategory = category;
+          renderCategories();
+          renderReels();
+          renderVideos();
+        };
+        
+        categoriesList.appendChild(categoryElement);
+      });
+    }
+
+    // REELS'LARI GÖSTER
+    function renderReels() {
+      const reelsContainer = document.getElementById('reelsContainer');
+      const reelsSection = document.getElementById('reelsSection');
+      
+      const reelsVideos = videos.filter(video => 
+        video.category === 'Reels' && 
+        (activeCategory === 'Hepsi' || activeCategory === 'Reels')
+      );
+      
+      if (reelsVideos.length === 0) {
+        reelsSection.style.display = 'none';
+        return;
+      }
+      
+      reelsSection.style.display = 'block';
+      reelsContainer.innerHTML = '';
+      
+      reelsVideos.forEach((video, index) => {
+        const reelsCard = document.createElement('div');
+        reelsCard.className = 'reels-card';
+        reelsCard.style.animationDelay = `${index * 0.1}s`;
+        reelsCard.onclick = () => playVideo(video.id, true);
+        
+        reelsCard.innerHTML = `
+          <div class="reels-thumb">
+            ${video.thumb ? 
+              `<img src="${video.thumb}" alt="${video.title}" onerror="this.style.display='none'" />` : 
+              `<div style="color:#fff;font-size:32px;font-weight:bold;display:flex;align-items:center;justify-content:center;height:100%;background:linear-gradient(135deg, var(--reels), #ff6b6b);">🔥</div>`
+            }
+            <div class="reels-play-icon">▶</div>
+            <div class="reels-overlay">
+              <div class="reels-title-text">${video.title}</div>
+            </div>
+          </div>
+        `;
+        
+        reelsContainer.appendChild(reelsCard);
+      });
+    }
+
+    // VİDEOLARI GÖSTER
+    function renderVideos() {
+      const videoGrid = document.getElementById('videoGrid');
+      videoGrid.innerHTML = '';
+      
+      const filteredVideos = videos.filter(video => 
+        video.category !== 'Reels' && 
+        (activeCategory === 'Hepsi' || activeCategory === video.category)
+      );
+      
+      if (filteredVideos.length === 0) {
+        videoGrid.innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted);background:var(--glass);border-radius:var(--radius);border:1px solid rgba(255,255,255,0.1)">
+            <div style="font-size:48px;margin-bottom:15px">📭</div>
+            <div style="font-size:18px;margin-bottom:8px">Bu kategoride içerik bulunamadı</div>
+            <div style="font-size:14px;opacity:0.7">Diğer kategorileri keşfedin!</div>
+          </div>
+        `;
+        return;
+      }
+      
+      filteredVideos.forEach((video, index) => {
+        const videoCard = document.createElement('div');
+        videoCard.className = 'video-card';
+        videoCard.style.animationDelay = `${index * 0.1}s`;
+        
+        videoCard.innerHTML = `
+          <div class="video-thumb">
+            ${video.thumb ? 
+              `<img src="${video.thumb}" alt="${video.title}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\"color:var(--muted);font-size:36px\">🎬</div>'" />` : 
+              `<div style="color:var(--muted);font-size:36px">🎬</div>`
+            }
+          </div>
+          <div class="video-info">
+            <div class="video-title">${video.title}</div>
+            <div class="video-category">📁 ${video.category}</div>
+            <button class="play-btn" onclick="playVideo('${video.id}')">
+              ▶ Oynat
+            </button>
+          </div>
+        `;
+        
+        videoGrid.appendChild(videoCard);
+      });
+      
+      updateStats();
+    }
+
+    // İSTATİSTİKLERİ GÜNCELLE
+    function updateStats() {
+      document.getElementById('totalVideos').textContent = videos.length;
+      document.getElementById('totalReels').textContent = videos.filter(v => v.category === 'Reels').length;
+      document.getElementById('totalCats').textContent = [...new Set(videos.map(v => v.category))].length;
+    }
+
+    // VİDEO OYNAT
+    function playVideo(videoId, isReels = false) {
+      const video = videos.find(v => v.id === videoId);
+      if (!video) return;
+      
+      const player = document.getElementById('player');
+      
+      if (video.type === 'iframe' || video.type === 'iframe-reels') {
+        if (isReels) {
+          player.innerHTML = `
+            <div class="reels-player">
+              <iframe 
+                src="${video.url}" 
+                width="100%" 
+                height="100%" 
+                frameborder="0" 
+                allowfullscreen
+                style="border-radius:21px"
+                allow="autoplay"
+              ></iframe>
+            </div>
+          `;
+        } else {
+          player.innerHTML = `
+            <iframe 
+              src="${video.url}" 
+              width="100%" 
+              height="100%" 
+              frameborder="0" 
+              allowfullscreen
+              style="border-radius:12px"
+              allow="autoplay"
+            ></iframe>
+          `;
+        }
+      }
+      
+      player.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function renderAll() {
+      renderCategories();
+      renderReels();
+      renderVideos();
+    }
+
+    // SAYFA YÜKLENDİĞİNDE
+    document.addEventListener('DOMContentLoaded', function() {
+      renderAll();
+      
+      // Canlı efekti için interval
+      setInterval(() => {
+        const liveBadge = document.querySelector('.live-badge');
+        if (liveBadge) {
+          liveBadge.style.animation = 'none';
+          setTimeout(() => {
+            liveBadge.style.animation = 'pulse 2s infinite';
+          }, 10);
+        }
+      }, 4000);
+    });
+
+    // ESC tuşu ile modal kapatma
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeAdminModal();
+      }
+    });
+  </script>
+</body>
+</html>
